@@ -1,6 +1,8 @@
 import 'package:attendence_sys/AppBar/CustomAppBar.dart';
 import 'package:attendence_sys/Student/MarkAt.dart';
 import 'package:attendence_sys/Student/databaseHelper.dart';
+import 'package:attendence_sys/main.dart';
+import 'package:attendence_sys/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -27,10 +29,16 @@ class _ViewRecordState extends State<ViewRecord> {
   }
 
   Future<void> _loadAttendanceRecords() async {
-    final records = await _databaseHelper.getAllAttendanceRecords();
-    setState(() {
-      attendanceRecords = records;
-    });
+    String? loggedInUserEmail = userMail;
+    if (loggedInUserEmail != null) {
+      String loggedInUserName = loggedInUserEmail.split('@').first;
+
+      final records = await _databaseHelper
+          .getAllAttendanceRecordsForUser(loggedInUserName);
+      setState(() {
+        attendanceRecords = records;
+      });
+    }
   }
 
   @override
@@ -76,25 +84,88 @@ class _ViewRecordState extends State<ViewRecord> {
                       child: ListTile(
                         title: Text(
                           'Date: ${_formatDate(record.date)}',
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.bold),
                         ),
                         subtitle: Text(
-                            'Present Status: ${record.isPresent ? 'Present' : 'Absent'}'),
+                            'Attendence Status: ${record.isPresent ? 'Present' : 'Absent'}'),
                         trailing:
                             DateTime.now().difference(record.date).inHours > 24
                                 ? Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       IconButton(
-                                        icon: Icon(Icons.edit),
+                                        icon: Icon(
+                                          Icons.edit,
+                                          color: Colors.blueAccent,
+                                          size: 20,
+                                        ),
                                         onPressed: () {
-                                          // Add your edit logic here
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      MarkAttendence()));
                                         },
                                       ),
                                       IconButton(
-                                        icon: Icon(Icons.delete),
-                                        onPressed: () {
-                                          // Add your delete logic here
+                                        icon: Icon(
+                                          Icons.delete,
+                                          color: Colors.redAccent,
+                                          size: 20,
+                                        ),
+                                        onPressed: () async {
+                                          print('Delete button pressed');
+                                          // Show a confirmation dialog before deleting
+                                          bool deleteConfirmed =
+                                              await showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Text('Delete Record'),
+                                                content: Text(
+                                                    'Are you sure you want to delete this record?'),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop(
+                                                          false); // Cancel delete
+                                                    },
+                                                    child: Text('Cancel'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () async {
+                                                      Navigator.of(context).pop(
+                                                          true); // Confirm delete
+                                                      // Delete the record from the database by date
+                                                      if (record.date != null) {
+                                                        await _databaseHelper
+                                                            .deleteAttendanceRecord(
+                                                                record.date);
+                                                      } else {
+                                                        print(
+                                                            'Record date is null, cannot delete.');
+                                                      }
+
+                                                      // Remove the record from the UI
+                                                      setState(() {
+                                                        attendanceRecords
+                                                            .remove(record);
+                                                      });
+                                                      print(
+                                                          'Record removed from UI');
+                                                      Utils().toastMessage(
+                                                          'Data Deleted...!!');
+                                                    },
+                                                    child: Text('Delete'),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                          print(
+                                              'Delete Confirmed: $deleteConfirmed');
                                         },
                                       ),
                                     ],

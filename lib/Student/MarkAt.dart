@@ -47,7 +47,7 @@ class _MarkAttendenceState extends State<MarkAttendence> {
   @override
   void initState() {
     super.initState();
-    _databaseHelper.initializeDatabase();
+    //_databaseHelper.initializeDatabase();
     _firstNameController = TextEditingController();
     _lastNameController = TextEditingController();
     _regNumberController = TextEditingController();
@@ -268,6 +268,7 @@ class _MarkAttendenceState extends State<MarkAttendence> {
             'Attendance already marked for this person in the last 24 hours!');
       } else {
         final record = AttendanceRecord(
+          id: null,
           firstName: _firstNameController.text,
           lastName: _lastNameController.text,
           regNum: _regNumberController.text,
@@ -329,11 +330,13 @@ class _MarkAttendenceState extends State<MarkAttendence> {
 }
 
 class AttendanceRecord {
+  int? id;
   String firstName, lastName, regNum, className;
   DateTime date;
   bool isPresent;
 
   AttendanceRecord({
+    this.id,
     required this.firstName,
     required this.lastName,
     required this.regNum,
@@ -342,7 +345,7 @@ class AttendanceRecord {
     required this.isPresent,
   });
   Map<String, dynamic> toMap() {
-    return {
+    Map<String, dynamic> map = {
       'firstName': firstName,
       'lastName': lastName,
       'registrationNumber': regNum,
@@ -350,5 +353,9 @@ class AttendanceRecord {
       'date': date.toIso8601String(),
       'isPresent': isPresent ? 1 : 0,
     };
+    if (id != null) {
+      map['id'] = id;
+    }
+    return map;
   }
 }

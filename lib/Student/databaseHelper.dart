@@ -27,14 +27,28 @@ class DatabaseHelper {
 
 //insert record
   Future<void> insertAttendanceRecord(AttendanceRecord record) async {
-    await _database.insert('attendence_records', record.toMap());
+    record.id = await _database.insert('attendence_records', record.toMap());
+  }
+
+//delete record
+
+  Future<void> deleteAttendanceRecord(DateTime date) async {
+    print('Deleting records for date: $date');
+    await _database.delete(
+      'attendence_records',
+      where: 'date = ?',
+      whereArgs: [date.toIso8601String()],
+    );
   }
 
 //all record
 
-  Future<List<AttendanceRecord>> getAllAttendanceRecords() async {
+  Future<List<AttendanceRecord>> getAllAttendanceRecordsForUser(
+      String userName) async {
     final List<Map<String, dynamic>> records = await _database.query(
       'attendence_records',
+      where: 'firstName || lastName = ?',
+      whereArgs: [userName],
       orderBy: 'date DESC',
     );
 
@@ -73,32 +87,5 @@ class DatabaseHelper {
     } else {
       return null;
     }
-  }
-
-  getAttendanceRecordByEmail(String loggedInUserEmail) {}
-
-  deleteAttendanceRecord(AttendanceRecord record) {}
-}
-
-Future<AttendanceRecord?> getAttendanceRecordByEmail(String email) async {
-  final List<Map<String, dynamic>> records = await _database.query(
-    'attendance_records',
-    where: 'firstName || lastName || "@student.com" = ?',
-    whereArgs: [email],
-    orderBy: 'date DESC',
-    limit: 1,
-  );
-
-  if (records.isNotEmpty) {
-    return AttendanceRecord(
-      firstName: records[0]['firstName'],
-      lastName: records[0]['lastName'],
-      regNum: records[0]['registrationNumber'],
-      className: records[0]['className'],
-      date: DateTime.parse(records[0]['date']),
-      isPresent: records[0]['isPresent'] == 1,
-    );
-  } else {
-    return null;
   }
 }

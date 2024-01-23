@@ -9,7 +9,8 @@ String? userMail;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(); // Initialize Firebase
-  final databaseHelper = DatabaseHelper();
+
+  DatabaseHelper databaseHelper = DatabaseHelper(); //initialize Database sql
   await databaseHelper.initializeDatabase();
   runApp(const MyApp());
 }
