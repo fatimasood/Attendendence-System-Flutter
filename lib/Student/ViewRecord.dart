@@ -50,7 +50,8 @@ class _ViewRecordState extends State<ViewRecord> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 15.0, bottom: 5.8),
+                padding:
+                    const EdgeInsets.only(left: 20, top: 15.0, bottom: 5.8),
                 child: Text(
                   "Here is your all attendence record ",
                   style: GoogleFonts.inter(
@@ -95,20 +96,6 @@ class _ViewRecordState extends State<ViewRecord> {
                                 ? Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      IconButton(
-                                        icon: Icon(
-                                          Icons.edit,
-                                          color: Colors.blueAccent,
-                                          size: 20,
-                                        ),
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      MarkAttendence()));
-                                        },
-                                      ),
                                       IconButton(
                                         icon: Icon(
                                           Icons.delete,
@@ -176,7 +163,6 @@ class _ViewRecordState extends State<ViewRecord> {
                     ),
                   ),
                 ),
-              // Add more widgets as needed
             ],
           ),
         ),
