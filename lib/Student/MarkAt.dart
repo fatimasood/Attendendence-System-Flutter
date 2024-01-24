@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:attendence_sys/AppBar/CustomAppBar.dart';
-import 'package:attendence_sys/Student/LeaveReq.dart';
 import 'package:attendence_sys/Student/databaseHelper.dart';
 import 'package:attendence_sys/utils.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../main.dart';
+
+String? loggedInUserEmail = userMail;
 
 class MarkAttendence extends StatefulWidget {
   final AttendanceRecord? attendanceRecord; // Add this line
@@ -31,6 +32,7 @@ class _MarkAttendenceState extends State<MarkAttendence> {
   late TextEditingController _classController;
   late TextEditingController _dateController;
   bool _isPresent = true;
+  //bool _isStudent = false;
 
   File? _image;
 
@@ -53,6 +55,73 @@ class _MarkAttendenceState extends State<MarkAttendence> {
     _regNumberController = TextEditingController();
     _classController = TextEditingController();
     _dateController = TextEditingController(text: DateTime.now().toString());
+  }
+
+  void _markAttendence() async {
+    String firstName = _firstNameController.text;
+    String lastName = _lastNameController.text;
+    String name = '$firstName$lastName';
+
+    print(loggedInUserEmail);
+    if (loggedInUserEmail == name.toLowerCase() + '@student.com') {
+      //_isStudent = true;
+      final existingRecord = await _databaseHelper.getAttendanceRecordByName(
+        _firstNameController.text,
+        _lastNameController.text,
+      );
+      if (existingRecord != null &&
+          DateTime.now().difference(existingRecord.date).inHours < 24) {
+        // Attendance already marked for the same name within the last 24 hours
+        Utils().toastMessage(
+            'Attendance already marked for this person in the last 24 hours!');
+      } else {
+        final record = AttendanceRecord(
+          id: null,
+          firstName: _firstNameController.text,
+          lastName: _lastNameController.text,
+          regNum: _regNumberController.text,
+          className: _classController.text,
+          date: DateTime.parse(_dateController.text),
+          isPresent: _isPresent,
+        );
+
+        try {
+          await _databaseHelper.initializeDatabase();
+          await _databaseHelper.insertAttendanceRecord(record);
+          Utils().toastMessage('Saved Successfully!');
+        } catch (e) {
+          Utils().toastMessage('Error! data not saved');
+        }
+      }
+    } else if (loggedInUserEmail!.contains('admin.com')) {
+      final existingRecord = await _databaseHelper.getAttendanceRecordByName(
+        _firstNameController.text,
+        _lastNameController.text,
+      );
+      if (existingRecord != null) {
+        Utils().toastMessage('Attendance already marked for this person');
+      } else {
+        final record = AttendanceRecord(
+          id: null,
+          firstName: _firstNameController.text,
+          lastName: _lastNameController.text,
+          regNum: _regNumberController.text,
+          className: _classController.text,
+          date: DateTime.parse(_dateController.text),
+          isPresent: _isPresent,
+        );
+
+        try {
+          await _databaseHelper.initializeDatabase();
+          await _databaseHelper.insertAttendanceRecord(record);
+          Utils().toastMessage('Saved Successfully!');
+        } catch (e) {
+          Utils().toastMessage('Error! data not saved');
+        }
+      }
+    } else {
+      Utils().toastMessage('You can only mark attendance for yourself.');
+    }
   }
 
   @override
@@ -206,88 +275,11 @@ class _MarkAttendenceState extends State<MarkAttendence> {
                   ),
                 ),
               ),
-              Container(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      top: 15.0, left: 25.0, right: 25.0, bottom: 10.8),
-                  child: Row(
-                    children: [
-                      Text(
-                        "Requested For Leave? ",
-                        style: GoogleFonts.inter(
-                          textStyle: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Color.fromARGB(255, 66, 19, 159),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LeaveReq())),
-                        child: Text(
-                          "Click here! ",
-                          style: GoogleFonts.inter(
-                            textStyle: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Color.fromARGB(255, 31, 104, 35),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  void _markAttendence() async {
-    String? loggedInUserEmail = userMail;
-
-    String firstName = _firstNameController.text;
-    String lastName = _lastNameController.text;
-    String name = '$firstName$lastName';
-
-    if (loggedInUserEmail == name.toLowerCase() + '@student.com') {
-      final existingRecord = await _databaseHelper.getAttendanceRecordByName(
-        _firstNameController.text,
-        _lastNameController.text,
-      );
-      if (existingRecord != null &&
-          DateTime.now().difference(existingRecord.date).inHours < 24) {
-        // Attendance already marked for the same name within the last 24 hours
-        Utils().toastMessage(
-            'Attendance already marked for this person in the last 24 hours!');
-      } else {
-        final record = AttendanceRecord(
-          id: null,
-          firstName: _firstNameController.text,
-          lastName: _lastNameController.text,
-          regNum: _regNumberController.text,
-          className: _classController.text,
-          date: DateTime.parse(_dateController.text),
-          isPresent: _isPresent,
-        );
-
-        try {
-          await _databaseHelper.initializeDatabase();
-          await _databaseHelper.insertAttendanceRecord(record);
-          Utils().toastMessage('Saved Successfully!');
-        } catch (e) {
-          Utils().toastMessage('Error! data not saved');
-        }
-      }
-    } else {
-      Utils().toastMessage('You can only mark attendance for yourself.');
-    }
   }
 
   Widget buildInputField({

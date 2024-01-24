@@ -68,7 +68,7 @@ class _ViewRecordState extends State<ViewRecord> {
                   padding: const EdgeInsets.fromLTRB(22, 12, 21, 9),
                   child: Container(
                     width: 340,
-                    height: 82,
+                    height: 90,
                     decoration: BoxDecoration(
                       color: Color.fromARGB(248, 238, 238, 238),
                       borderRadius: BorderRadius.circular(12),

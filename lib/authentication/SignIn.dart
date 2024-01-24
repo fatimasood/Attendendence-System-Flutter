@@ -45,7 +45,7 @@ class _SignInState extends State<SignIn> {
       userMail = userEmail.toLowerCase();
 
       if (userEmail.contains('@admin.com')) {
-        //Admin HOme page
+       
         Navigator.push(
           context,
           MaterialPageRoute(

@@ -27,7 +27,7 @@ class DatabaseHelper {
 
 //insert record
   Future<void> insertAttendanceRecord(AttendanceRecord record) async {
-    record.id = await _database.insert('attendence_records', record.toMap());
+    await _database.insert('attendence_records', record.toMap());
   }
 
 //delete record
@@ -62,6 +62,26 @@ class DatabaseHelper {
         isPresent: record['isPresent'] == 1,
       );
     }).toList();
+  }
+
+// all record
+  Future<List<AttendanceRecord>> getAllAttendanceRecords() async {
+    final List<Map<String, dynamic>> records = await _database.query(
+      'attendence_records',
+      orderBy: 'date DESC',
+    );
+
+    return records.map((record) {
+      return AttendanceRecord(
+        firstName: record['firstName'],
+        lastName: record['lastName'],
+        regNum: record['registrationNumber'],
+        className: record['className'],
+        date: DateTime.parse(record['date']),
+        isPresent: record['isPresent'] == 1,
+      );
+    }).toList();
+    
   }
 
   Future<AttendanceRecord?> getAttendanceRecordByName(
