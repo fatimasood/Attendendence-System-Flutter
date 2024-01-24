@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:attendence_sys/Student/MarkAt.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -81,15 +82,68 @@ class DatabaseHelper {
         isPresent: record['isPresent'] == 1,
       );
     }).toList();
-    
+  }
+
+//update record
+  Future<void> updateAttendanceRecord(AttendanceRecord record) async {
+    await _database.update(
+      'attendence_records',
+      {
+        'firstName': record.firstName,
+        'lastName': record.lastName,
+        'registrationNumber': record.regNum,
+        'className': record.className,
+        'date': record.date.toIso8601String(),
+        'isPresent': record.isPresent ? 1 : 0,
+      },
+      where: 'firstName = ? AND lastName = ? ',
+      whereArgs: [
+        record.firstName,
+        record.lastName,
+       // record.date.toIso8601String(),
+      ],
+    );
+  }
+
+  Future<AttendanceRecord?> getAttendanceRecordByNameAndDate(
+      String firstName, String lastName, DateTime date) async {
+    print('Searching for: $firstName $lastName on $date');
+
+    final List<Map<String, dynamic>> records = await _database.query(
+      'attendence_records',
+      where: 'LOWER(firstName) = ? AND LOWER(lastName) = ? AND date = ?',
+      whereArgs: [
+        firstName.toLowerCase(),
+        lastName.toLowerCase(),
+        DateFormat('yyyy-MM-dd').format(date),
+      ],
+      limit: 1,
+    );
+
+    if (records.isNotEmpty) {
+      print('Record found:');
+      print(records[0]); // Print the found record for more details
+      return AttendanceRecord(
+        firstName: records[0]['firstName'],
+        lastName: records[0]['lastName'],
+        regNum: records[0]['registrationNumber'],
+        className: records[0]['className'],
+        date: DateTime.parse(records[0]['date']),
+        isPresent: records[0]['isPresent'] == 1,
+      );
+    } else {
+      print('No record found for: $firstName $lastName on $date');
+      return null;
+    }
   }
 
   Future<AttendanceRecord?> getAttendanceRecordByName(
       String firstName, String lastName) async {
     final List<Map<String, dynamic>> records = await _database.query(
       'attendence_records',
-      where: 'firstName = ? AND lastName = ?',
-      whereArgs: [firstName, lastName],
+      where: 'LOWER(firstName) = ? AND LOWER(lastName) = ?',
+      whereArgs: [firstName.toLowerCase(), lastName.toLowerCase()],
+
       orderBy:
           'date DESC', // Order by date in descending order to get the latest record first
       limit: 1, // Limit set

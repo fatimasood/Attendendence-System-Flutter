@@ -1,3 +1,4 @@
+import 'package:attendence_sys/Admin/UpdateRecord.dart';
 import 'package:attendence_sys/AppBar/CustomAppBar.dart';
 import 'package:attendence_sys/Student/MarkAt.dart';
 import 'package:attendence_sys/Student/databaseHelper.dart';
@@ -102,7 +103,12 @@ class _ViewRecordAState extends State<ViewRecordA> {
                                 size: 20,
                               ),
                               onPressed: () {
-                                // Navigate to the update screen
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UpdateRecord(),
+                                  ),
+                                );
                               },
                             ),
                             IconButton(
@@ -184,9 +190,9 @@ class _ViewRecordAState extends State<ViewRecordA> {
         },
         child: Icon(
           Icons.add,
-          color: Colors.pink,
+          color: Colors.white,
         ),
-        backgroundColor: Colors.pink.shade100,
+        backgroundColor: Color(0xffc780ff),
       ),
     );
   }
