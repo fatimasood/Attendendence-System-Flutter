@@ -98,26 +98,23 @@ class _MarkAttendenceState extends State<MarkAttendence> {
         _firstNameController.text,
         _lastNameController.text,
       );
-      if (existingRecord != null) {
-        Utils().toastMessage('Attendance already marked for this person');
-      } else {
-        final record = AttendanceRecord(
-          id: null,
-          firstName: _firstNameController.text,
-          lastName: _lastNameController.text,
-          regNum: _regNumberController.text,
-          className: _classController.text,
-          date: DateTime.parse(_dateController.text),
-          isPresent: _isPresent,
-        );
 
-        try {
-          await _databaseHelper.initializeDatabase();
-          await _databaseHelper.insertAttendanceRecord(record);
-          Utils().toastMessage('Saved Successfully!');
-        } catch (e) {
-          Utils().toastMessage('Error! data not saved');
-        }
+      final record = AttendanceRecord(
+        id: null,
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        regNum: _regNumberController.text,
+        className: _classController.text,
+        date: DateTime.parse(_dateController.text),
+        isPresent: _isPresent,
+      );
+
+      try {
+        await _databaseHelper.initializeDatabase();
+        await _databaseHelper.insertAttendanceRecord(record);
+        Utils().toastMessage('Saved Successfully!');
+      } catch (e) {
+        Utils().toastMessage('Error! data not saved');
       }
     } else {
       Utils().toastMessage('You can only mark attendance for yourself.');
@@ -336,6 +333,7 @@ class AttendanceRecord {
     required this.date,
     required this.isPresent,
   });
+
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
       'firstName': firstName,
@@ -349,29 +347,5 @@ class AttendanceRecord {
       map['id'] = id;
     }
     return map;
-  }
-
-  Map<String, Map<String, int>> calculatePresentAbsentStats(
-      List<AttendanceRecord> records) {
-    // Map to store the statistics for each student
-    Map<String, Map<String, int>> stats = {};
-
-    for (var record in records) {
-      String studentKey = '${record.firstName} ${record.lastName}';
-
-      // Initialize the student's statistics if not exists
-      stats.putIfAbsent(studentKey, () => {'present': 0, 'absent': 0});
-
-      // Update the statistics based on the record
-      if (record.isPresent) {
-        stats[studentKey]!['present'] =
-            (stats[studentKey]!['present'] ?? 0) + 1;
-      } else {
-        stats[studentKey]!['absent'] = (stats[studentKey]!['absent'] ?? 0) + 1;
-      }
-    }
-    print(stats);
-
-    return stats;
   }
 }

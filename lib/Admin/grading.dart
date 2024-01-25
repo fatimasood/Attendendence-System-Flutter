@@ -1,4 +1,5 @@
 import 'package:attendence_sys/AppBar/CustomAppBar.dart';
+import 'package:attendence_sys/Student/MarkAt.dart';
 import 'package:attendence_sys/Student/databaseHelper.dart';
 import 'package:attendence_sys/utils.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class _gradingState extends State<grading> {
 
   bool _isEditable = true;
   bool _isPresent = true;
+  String _grade = '';
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
@@ -91,18 +93,47 @@ class _gradingState extends State<grading> {
                             if (_formKey.currentState!.validate()) {
                               String firstName = _firstNameController.text;
                               String lastName = _lastNameController.text;
-                              String regNumber =
-                                  _registrationNumberController.text;
-                              String className = _classNameController.text;
-                              String date = _dateController.text;
-                              await checkAndUpdateFields(firstName, lastName);
+
+                              AttendanceRecord? attendanceRecord =
+                                  await _databaseHelper
+                                      .getAttendanceRecordByName(
+                                          firstName, lastName);
+
+                              if (attendanceRecord != null) {
+                                print(
+                                    'Attendance Record Found: ${attendanceRecord.toString()}');
+
+                                Map<String, Map<String, dynamic>> stats =
+                                    calculatePresentAbsentStats(
+                                        [attendanceRecord]);
+                                print('Attended Days: $stats');
+
+                                // Use the correct type for attendedDays when calling calculateGrade
+                                String studentKey =
+                                    '${attendanceRecord.firstName} ${attendanceRecord.lastName}';
+                                int totalPresent =
+                                    stats[studentKey]!['present'] ?? 0;
+
+                                int totalDays =
+                                    stats[studentKey]!['total'] ?? 0;
+
+                                _grade = GradingLogic.calculateGrade(
+                                    totalPresent, totalDays);
+
+                                await checkAndUpdateFields(firstName, lastName);
+                              } else {
+                                Utils().toastMessage(
+                                    'No Record Found for $firstName $lastName');
+                                print(
+                                    'No Attendance Record Found for $firstName $lastName');
+                              }
                             }
                           },
                         ),
                       ),
                       SizedBox(height: 70),
                       Text(
-                        " GRADE IS: ",
+                        " GRADE IS: $_grade",
                         style: GoogleFonts.inter(
                           textStyle: const TextStyle(
                               fontSize: 18,
@@ -121,14 +152,40 @@ class _gradingState extends State<grading> {
     );
   }
 
-  Future<void> checkAndUpdateFields(String firstName, String lastName) async {
-    //print('Checking for: $firstName $lastName on $regNum');
+  Map<String, Map<String, int>> calculatePresentAbsentStats(
+      List<AttendanceRecord> records) {
+    Map<String, Map<String, int>> attendedDays = {};
 
-    final existingRecord = await _databaseHelper.getAttendanceRecordByReg(
-      firstName,
-      lastName,
-      //regNum,
-    );
+    // Iterate through each record
+    for (var record in records) {
+      String studentKey = '${record.firstName} ${record.lastName}';
+
+      // Initialize the student's statistics if not exists
+      attendedDays.putIfAbsent(studentKey, () => {'present': 0, 'total': 0});
+
+      // Update the statistics based on the record
+      attendedDays[studentKey]!['total'] =
+          (attendedDays[studentKey]!['total'] ?? 0) + 1;
+
+      if (record.isPresent) {
+        attendedDays[studentKey]!['present'] =
+            (attendedDays[studentKey]!['present'] ?? 0) + 1;
+      }
+    }
+
+    // Iterate through the attendedDays map to calculate grades
+    attendedDays.forEach((student, stats) {
+      int totalPresent = stats['present'] ?? 0;
+      int totalDays = stats['total'] ?? 0;
+      String grade = GradingLogic.calculateGrade(totalPresent, totalDays);
+    });
+
+    return attendedDays;
+  }
+
+  Future<void> checkAndUpdateFields(String firstName, String lastName) async {
+    final existingRecord =
+        await _databaseHelper.getAttendanceRecordByName(firstName, lastName);
 
     if (existingRecord != null) {
       setState(() {
@@ -186,14 +243,16 @@ class _gradingState extends State<grading> {
 }
 
 class GradingLogic {
-  static String calculateGrade(int attendedDays) {
-    if (attendedDays >= 26) {
+  static String calculateGrade(int totalPresent, int totalDays) {
+    double attendancePercentage = totalPresent / totalDays * 100;
+
+    if (attendancePercentage >= 26) {
       return 'A';
-    } else if (attendedDays >= 20) {
+    } else if (attendancePercentage >= 22) {
       return 'B';
-    } else if (attendedDays >= 15) {
+    } else if (attendancePercentage >= 20) {
       return 'C';
-    } else if (attendedDays >= 10) {
+    } else if (attendancePercentage >= 18) {
       return 'D';
     } else {
       return 'F';
