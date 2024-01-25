@@ -1,4 +1,5 @@
 import 'package:attendence_sys/Admin/ViewRecordA.dart';
+import 'package:attendence_sys/Admin/grading.dart';
 import 'package:attendence_sys/AppBar/CustomAppBar.dart';
 import 'package:attendence_sys/Student/LeaveReq.dart';
 import 'package:attendence_sys/Student/MarkAt.dart';
@@ -230,7 +231,7 @@ class _AdminHomeState extends State<AdminHome> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => LeaveReq(),
+                            builder: (context) => grading(),
                           ),
                         );
                       },

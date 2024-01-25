@@ -350,4 +350,28 @@ class AttendanceRecord {
     }
     return map;
   }
+
+  Map<String, Map<String, int>> calculatePresentAbsentStats(
+      List<AttendanceRecord> records) {
+    // Map to store the statistics for each student
+    Map<String, Map<String, int>> stats = {};
+
+    for (var record in records) {
+      String studentKey = '${record.firstName} ${record.lastName}';
+
+      // Initialize the student's statistics if not exists
+      stats.putIfAbsent(studentKey, () => {'present': 0, 'absent': 0});
+
+      // Update the statistics based on the record
+      if (record.isPresent) {
+        stats[studentKey]!['present'] =
+            (stats[studentKey]!['present'] ?? 0) + 1;
+      } else {
+        stats[studentKey]!['absent'] = (stats[studentKey]!['absent'] ?? 0) + 1;
+      }
+    }
+    print(stats);
+
+    return stats;
+  }
 }

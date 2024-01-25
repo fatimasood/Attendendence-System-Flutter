@@ -100,7 +100,7 @@ class DatabaseHelper {
       whereArgs: [
         record.firstName,
         record.lastName,
-       // record.date.toIso8601String(),
+        // record.date.toIso8601String(),
       ],
     );
   }
@@ -142,6 +142,32 @@ class DatabaseHelper {
     final List<Map<String, dynamic>> records = await _database.query(
       'attendence_records',
       where: 'LOWER(firstName) = ? AND LOWER(lastName) = ?',
+      whereArgs: [firstName.toLowerCase(), lastName.toLowerCase()],
+
+      orderBy:
+          'date DESC', // Order by date in descending order to get the latest record first
+      limit: 1, // Limit set
+    );
+
+    if (records.isNotEmpty) {
+      return AttendanceRecord(
+        firstName: records[0]['firstName'],
+        lastName: records[0]['lastName'],
+        regNum: records[0]['registrationNumber'],
+        className: records[0]['className'],
+        date: DateTime.parse(records[0]['date']),
+        isPresent: records[0]['isPresent'] == 1,
+      );
+    } else {
+      return null;
+    }
+  }
+
+  Future<AttendanceRecord?> getAttendanceRecordByReg(
+      String firstName, String lastName) async {
+    final List<Map<String, dynamic>> records = await _database.query(
+      'attendence_records',
+      where: 'LOWER(firstName) = ? AND LOWER(lastName) ',
       whereArgs: [firstName.toLowerCase(), lastName.toLowerCase()],
 
       orderBy:
