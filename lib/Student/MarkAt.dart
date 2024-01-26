@@ -12,7 +12,7 @@ import '../main.dart';
 String? loggedInUserEmail = userMail;
 
 class MarkAttendence extends StatefulWidget {
-  final AttendanceRecord? attendanceRecord;
+  final AttendanceRecord? attendanceRecord; // Add this line
 
   const MarkAttendence({Key? key, this.attendanceRecord})
       : super(key: key); // Modify the constructor
@@ -32,7 +32,6 @@ class _MarkAttendenceState extends State<MarkAttendence> {
   late TextEditingController _classController;
   late TextEditingController _dateController;
   bool _isPresent = true;
-  //bool _isStudent = false;
 
   File? _image;
 
@@ -55,65 +54,6 @@ class _MarkAttendenceState extends State<MarkAttendence> {
     _regNumberController = TextEditingController();
     _classController = TextEditingController();
     _dateController = TextEditingController(text: DateTime.now().toString());
-  }
-
-  void _markAttendence() async {
-    String firstName = _firstNameController.text;
-    String lastName = _lastNameController.text;
-    String name = '$firstName$lastName';
-
-    print(loggedInUserEmail);
-    if (loggedInUserEmail == name.toLowerCase() + '@student.com') {
-      //_isStudent = true;
-      final existingRecord = await _databaseHelper.getAttendanceRecordByName(
-        _firstNameController.text,
-        _lastNameController.text,
-      );
-      if (existingRecord != null &&
-          DateTime.now().difference(existingRecord.date).inHours < 24) {
-        // Attendance already marked for the same name within the last 24 hours
-        Utils().toastMessage(
-            'Attendance already marked for this person in the last 24 hours!');
-      } else {
-        final record = AttendanceRecord(
-          id: null,
-          firstName: _firstNameController.text,
-          lastName: _lastNameController.text,
-          regNum: _regNumberController.text,
-          className: _classController.text,
-          date: DateTime.parse(_dateController.text),
-          isPresent: _isPresent,
-        );
-
-        try {
-          await _databaseHelper.initializeDatabase();
-          await _databaseHelper.insertAttendanceRecord(record);
-          Utils().toastMessage('Saved Successfully!');
-        } catch (e) {
-          Utils().toastMessage('Error! data not saved');
-        }
-      }
-    } else if (loggedInUserEmail!.contains('admin.com')) {
-      final record = AttendanceRecord(
-        id: null,
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
-        regNum: _regNumberController.text,
-        className: _classController.text,
-        date: DateTime.parse(_dateController.text),
-        isPresent: _isPresent,
-      );
-
-      try {
-        await _databaseHelper.initializeDatabase();
-        await _databaseHelper.insertAttendanceRecord(record);
-        Utils().toastMessage('Saved Successfully!');
-      } catch (e) {
-        Utils().toastMessage('Error! data not saved');
-      }
-    } else {
-      Utils().toastMessage('You can only mark attendance for yourself.');
-    }
   }
 
   @override
@@ -169,7 +109,7 @@ class _MarkAttendenceState extends State<MarkAttendence> {
                         height: 13,
                       ),
                       Container(
-                        width: 326,
+                        width: 300,
                         height: 50,
                         decoration: BoxDecoration(
                           color: Color.fromARGB(248, 238, 238, 238),
@@ -274,6 +214,75 @@ class _MarkAttendenceState extends State<MarkAttendence> {
     );
   }
 
+  void _markAttendence() async {
+    String firstName = _firstNameController.text;
+    String lastName = _lastNameController.text;
+    String name = '$firstName$lastName';
+    print("Login mail is: ,$loggedInUserEmail");
+    if (loggedInUserEmail!.contains('@student.com')) {
+      final existingRecord = await _databaseHelper.getAttendanceRecordByName(
+        _firstNameController.text,
+        _lastNameController.text,
+      );
+      if (existingRecord != null &&
+          DateTime.now().difference(existingRecord.date).inHours < 24) {
+        // Attendance already marked for the same name within the last 24 hours
+        Utils().toastMessage(
+            'Attendance already marked for this person in the last 24 hours!');
+      } else {
+        final record = AttendanceRecord(
+          id: null,
+          firstName: _firstNameController.text,
+          lastName: _lastNameController.text,
+          regNum: _regNumberController.text,
+          className: _classController.text,
+          date: DateTime.parse(_dateController.text),
+          isPresent: _isPresent,
+        );
+
+        try {
+          await _databaseHelper.initializeDatabase();
+          await _databaseHelper.insertAttendanceRecord(record);
+          Utils().toastMessage('Saved Successfully!');
+        } catch (e) {
+          Utils().toastMessage('Error! data not saved');
+        }
+      }
+    } else if (loggedInUserEmail!.contains('@admin.com')) {
+      print("Login mail is: ,$loggedInUserEmail");
+      final existingRecord = await _databaseHelper.getAttendanceRecordByName(
+        _firstNameController.text,
+        _lastNameController.text,
+      );
+      if (existingRecord != null &&
+          DateTime.now().difference(existingRecord.date).inHours < 24) {
+        // Attendance already marked for the same name within the last 24 hours
+        Utils().toastMessage(
+            'Attendance already marked for this person in the last 24 hours!');
+      } else {
+        final record = AttendanceRecord(
+          id: null,
+          firstName: _firstNameController.text,
+          lastName: _lastNameController.text,
+          regNum: _regNumberController.text,
+          className: _classController.text,
+          date: DateTime.parse(_dateController.text),
+          isPresent: _isPresent,
+        );
+
+        try {
+          await _databaseHelper.initializeDatabase();
+          await _databaseHelper.insertAttendanceRecord(record);
+          Utils().toastMessage('Saved Successfully!');
+        } catch (e) {
+          Utils().toastMessage('Error! data not saved');
+        }
+      }
+    } else {
+      Utils().toastMessage('You can only mark attendance for yourself.');
+    }
+  }
+
   Widget buildInputField({
     TextEditingController? controller,
     required String hintText,
@@ -328,7 +337,6 @@ class AttendanceRecord {
     required this.date,
     required this.isPresent,
   });
-
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
       'firstName': firstName,

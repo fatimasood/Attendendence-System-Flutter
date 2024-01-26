@@ -12,6 +12,7 @@ void main() async {
 
   DatabaseHelper databaseHelper = DatabaseHelper(); //initialize Database sql
   await databaseHelper.initializeDatabase();
+
   runApp(const MyApp());
 }
 

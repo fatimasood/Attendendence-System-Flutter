@@ -1,3 +1,4 @@
+import 'package:attendence_sys/AdminStudent.dart';
 import 'package:attendence_sys/authentication/SignUp.dart';
 import 'package:attendence_sys/main.dart';
 import 'package:attendence_sys/utils.dart';
@@ -81,9 +82,33 @@ class _SignInState extends State<SignIn> {
           body: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 10, left: 15),
+                  child: Container(
+                    child: SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back_ios_new,
+                          color: Color(0xffc780ff),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AdminStudent(),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(
-                  height: 40,
+                  height: 25,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -169,53 +194,57 @@ class _SignInState extends State<SignIn> {
                 const SizedBox(
                   height: 61,
                 ),
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      buildInputField(
-                        hintText: 'Email',
-                        prefixIcon: Icons.mail_outline_rounded,
-                      ),
-                      const SizedBox(height: 12),
-                      buildInputField(
-                        hintText: 'Password',
-                        prefixIcon: Icons.lock_outline,
-                        isPassword: true,
-                        onTogglePassword: () {
-                          setState(() {
-                            _isPasswordVisible = !_isPasswordVisible;
-                          });
-                        },
-                      ),
-                    ],
+                Center(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        buildInputField(
+                          hintText: 'Email',
+                          prefixIcon: Icons.mail_outline_rounded,
+                        ),
+                        const SizedBox(height: 12),
+                        buildInputField(
+                          hintText: 'Password',
+                          prefixIcon: Icons.lock_outline,
+                          isPassword: true,
+                          onTogglePassword: () {
+                            setState(() {
+                              _isPasswordVisible = !_isPasswordVisible;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 70),
-                  child: SizedBox(
-                    height: 40,
-                    width: 140,
-                    child: InkWell(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: const Color(0xffc780ff),
-                        ),
-                        child: Text(
-                          "Log in",
-                          style: GoogleFonts.inter(
-                            textStyle: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xffdde6ed),
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 70),
+                    child: SizedBox(
+                      height: 40,
+                      width: 140,
+                      child: InkWell(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: const Color(0xffc780ff),
+                          ),
+                          child: Text(
+                            "Log in",
+                            style: GoogleFonts.inter(
+                              textStyle: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xffdde6ed),
+                              ),
                             ),
                           ),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              login();
+                            } else {}
+                          },
                         ),
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            login();
-                          } else {}
-                        },
                       ),
                     ),
                   ),
@@ -224,13 +253,15 @@ class _SignInState extends State<SignIn> {
                   width: 10,
                   height: 20,
                 ),
-                Text(
-                  'Forget password?',
-                  style: GoogleFonts.inter(
-                    textStyle: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xff9d6bff),
+                Center(
+                  child: Text(
+                    'Forget password?',
+                    style: GoogleFonts.inter(
+                      textStyle: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xff9d6bff),
+                      ),
                     ),
                   ),
                 ),

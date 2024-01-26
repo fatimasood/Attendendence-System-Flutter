@@ -1,10 +1,10 @@
 import 'package:attendence_sys/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../AppBar/CustomAppBar.dart';
 import '../utils.dart';
-import 'databaseHelper.dart';
 
 String? loggedInUserEmail = userMail;
 
@@ -16,7 +16,6 @@ class LeaveReq extends StatefulWidget {
 }
 
 class _LeaveReqState extends State<LeaveReq> {
-  final DatabaseHelper _databaseHelper = DatabaseHelper();
   final TextEditingController _paragraphController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
 
@@ -98,7 +97,6 @@ class _LeaveReqState extends State<LeaveReq> {
                         ),
                       ),
                       SizedBox(height: 8.0),
-                      // leave_req.dart
                       SizedBox(
                         height: 40,
                         width: 140,
@@ -121,7 +119,7 @@ class _LeaveReqState extends State<LeaveReq> {
                               if (_paragraphController.text.isNotEmpty) {
                                 if (_emailController.text ==
                                     loggedInUserEmail) {
-                                  await _databaseHelper.saveLeaveRequest(
+                                  saveLeaveRequestToSharedPreferences(
                                     loggedInUserEmail!,
                                     _paragraphController.text,
                                   );
@@ -150,6 +148,19 @@ class _LeaveReqState extends State<LeaveReq> {
         ),
       ),
     );
+  }
+
+  void saveLeaveRequestToSharedPreferences(
+      String userEmail, String reason) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? userEmails = prefs.getStringList('leaveRequestEmails') ?? [];
+    List<String>? reasons = prefs.getStringList('leaveRequestReasons') ?? [];
+
+    userEmails.add(userEmail);
+    reasons.add(reason);
+
+    prefs.setStringList('leaveRequestEmails', userEmails);
+    prefs.setStringList('leaveRequestReasons', reasons);
   }
 
   Widget buildInputField({

@@ -1,3 +1,4 @@
+import 'package:attendence_sys/AdminStudent.dart';
 import 'package:attendence_sys/authentication/SignIn.dart';
 import 'package:attendence_sys/main.dart';
 import 'package:attendence_sys/utils.dart';
@@ -78,8 +79,32 @@ class _SignUpState extends State<SignUp> {
           body: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 40),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10, left: 15),
+                  child: Container(
+                    child: SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back_ios_new,
+                          color: Color(0xffc780ff),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AdminStudent(),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 25),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -160,61 +185,65 @@ class _SignUpState extends State<SignUp> {
                   ],
                 ),
                 const SizedBox(height: 31),
-                Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        buildInputField(
-                          controller: fullNameController,
-                          hintText: 'Full name',
-                          prefixIcon: Icons.person_2_outlined,
-                          isNameField: true,
-                        ),
-                        // const SizedBox(height: 7),
-                        buildInputField(
-                          hintText: 'Email',
-                          prefixIcon: Icons.mail_outline_rounded,
-                          controller: emailController,
-                        ),
-                        //const SizedBox(height: 7),
-                        buildInputField(
-                          controller: passwordController,
-                          hintText: 'Password',
-                          prefixIcon: Icons.lock_outline,
-                          isPassword: true,
-                          onTogglePassword: () {
-                            setState(() {
-                              _passwordVisible = !_passwordVisible;
-                            });
-                          },
-                        ),
-                        const SizedBox(height: 50),
-                        SizedBox(
-                          height: 40,
-                          width: 140,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xffc780ff),
-                            ),
-                            child: Text(
-                              "Sign up",
-                              style: GoogleFonts.inter(
-                                textStyle: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xffdde6ed),
-                                ),
-                              ),
-                            ),
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                signup();
-                              } else {}
+                Center(
+                  child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          buildInputField(
+                            controller: fullNameController,
+                            hintText: 'Full name',
+                            prefixIcon: Icons.person_2_outlined,
+                            isNameField: true,
+                          ),
+                          // const SizedBox(height: 7),
+                          buildInputField(
+                            hintText: 'Email',
+                            prefixIcon: Icons.mail_outline_rounded,
+                            controller: emailController,
+                          ),
+                          //const SizedBox(height: 7),
+                          buildInputField(
+                            controller: passwordController,
+                            hintText: 'Password',
+                            prefixIcon: Icons.lock_outline,
+                            isPassword: true,
+                            onTogglePassword: () {
+                              setState(() {
+                                _passwordVisible = !_passwordVisible;
+                              });
                             },
                           ),
-                        ),
-                      ],
-                    )),
+                          const SizedBox(height: 50),
+                          SizedBox(
+                            height: 40,
+                            width: 140,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xffc780ff),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "Sign up",
+                                  style: GoogleFonts.inter(
+                                    textStyle: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xffdde6ed),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  signup();
+                                } else {}
+                              },
+                            ),
+                          ),
+                        ],
+                      )),
+                ),
                 const SizedBox(height: 185),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

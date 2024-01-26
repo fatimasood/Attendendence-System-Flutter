@@ -283,6 +283,7 @@ class _UpdateRecordState extends State<UpdateRecord> {
     String lastName = _lastNameController.text;
     String regNumber = _registrationNumberController.text;
 
+    // String req = _reqController.text;
     String className = _classNameController.text;
     String date = _dateController.text;
 
@@ -291,6 +292,8 @@ class _UpdateRecordState extends State<UpdateRecord> {
       lastName: lastName,
       regNum: regNumber,
       className: className,
+
+      //req: req,
       date: DateTime.parse(date),
       isPresent: _isPresent,
       // You can update other fields as needed

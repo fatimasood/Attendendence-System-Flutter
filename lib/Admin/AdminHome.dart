@@ -1,7 +1,7 @@
+import 'package:attendence_sys/Admin/LeaveAccept.dart';
 import 'package:attendence_sys/Admin/ViewRecordA.dart';
 import 'package:attendence_sys/Admin/grading.dart';
 import 'package:attendence_sys/AppBar/CustomAppBar.dart';
-import 'package:attendence_sys/Student/MarkAt.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -93,57 +93,6 @@ class _AdminHomeState extends State<AdminHome> {
               children: [
                 Container(
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 25.0, bottom: 15.8),
-                    child: Text(
-                      "To create report. Click Here! ",
-                      style: GoogleFonts.inter(
-                        textStyle: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xff9d6bff),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 50,
-                  width: 180,
-                  child: InkWell(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: const Color(0xffc780ff),
-                      ),
-                      child: Text(
-                        "Create Report",
-                        style: GoogleFonts.inter(
-                          textStyle: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Color.fromARGB(255, 238, 244, 248),
-                          ),
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MarkAttendence(),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Column(
-              children: [
-                Container(
-                  child: Padding(
                     padding: const EdgeInsets.only(top: 25.0, bottom: 20.8),
                     child: Text(
                       "Check Leave Requests. Click Here! ",
@@ -176,12 +125,12 @@ class _AdminHomeState extends State<AdminHome> {
                         ),
                       ),
                       onPressed: () {
-                        /*Navigator.push(
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => LeaveAccept(),
                           ),
-                        );*/
+                        );
                       },
                     ),
                   ),
