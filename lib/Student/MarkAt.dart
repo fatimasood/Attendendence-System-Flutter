@@ -12,7 +12,7 @@ import '../main.dart';
 String? loggedInUserEmail = userMail;
 
 class MarkAttendence extends StatefulWidget {
-  final AttendanceRecord? attendanceRecord; // Add this line
+  final AttendanceRecord? attendanceRecord;
 
   const MarkAttendence({Key? key, this.attendanceRecord})
       : super(key: key); // Modify the constructor
@@ -32,7 +32,7 @@ class _MarkAttendenceState extends State<MarkAttendence> {
   late TextEditingController _classController;
   late TextEditingController _dateController;
   bool _isPresent = true;
-  //bool _isStudent = false;
+  bool _isStudent = false;
 
   File? _image;
 
@@ -64,7 +64,7 @@ class _MarkAttendenceState extends State<MarkAttendence> {
 
     print(loggedInUserEmail);
     if (loggedInUserEmail == name.toLowerCase() + '@student.com') {
-      //_isStudent = true;
+      _isStudent = true;
       final existingRecord = await _databaseHelper.getAttendanceRecordByName(
         _firstNameController.text,
         _lastNameController.text,
@@ -94,11 +94,6 @@ class _MarkAttendenceState extends State<MarkAttendence> {
         }
       }
     } else if (loggedInUserEmail!.contains('admin.com')) {
-      final existingRecord = await _databaseHelper.getAttendanceRecordByName(
-        _firstNameController.text,
-        _lastNameController.text,
-      );
-
       final record = AttendanceRecord(
         id: null,
         firstName: _firstNameController.text,

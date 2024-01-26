@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:attendence_sys/Student/MarkAt.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
@@ -12,37 +10,36 @@ class DatabaseHelper {
     String path = await getDatabasesPath();
     _database = await openDatabase(
       join(path, 'attendence_database.db'),
-      onCreate: (db, version) {
-        return db.execute(
-            '''CREATE TABLE attendence_records( id INTEGER PRIMARY KEY AUTOINCREMENT,
-            firstName TEXT,
-            lastName TEXT,
-            registrationNumber TEXT,
-            className TEXT,
-            date TEXT,
-            isPresent INTEGER )''');
+      onCreate: (db, version) async {
+        await db.execute('''CREATE TABLE attendence_records( 
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              firstName TEXT,
+              lastName TEXT,
+              registrationNumber TEXT,
+              className TEXT,
+              date TEXT,
+              isPresent INTEGER )''');
+
+        await db.execute('''CREATE TABLE leave_requests( 
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              user_email TEXT,
+              reason TEXT )''');
       },
       version: 1,
     );
   }
 
-//insert record
   Future<void> insertAttendanceRecord(AttendanceRecord record) async {
     await _database.insert('attendence_records', record.toMap());
   }
 
-//delete record
-
   Future<void> deleteAttendanceRecord(DateTime date) async {
-    print('Deleting records for date: $date');
     await _database.delete(
       'attendence_records',
       where: 'date = ?',
       whereArgs: [date.toIso8601String()],
     );
   }
-
-//all record
 
   Future<List<AttendanceRecord>> getAllAttendanceRecordsForUser(
       String userName) async {
@@ -65,7 +62,6 @@ class DatabaseHelper {
     }).toList();
   }
 
-// all record
   Future<List<AttendanceRecord>> getAllAttendanceRecords() async {
     final List<Map<String, dynamic>> records = await _database.query(
       'attendence_records',
@@ -84,7 +80,6 @@ class DatabaseHelper {
     }).toList();
   }
 
-//update record
   Future<void> updateAttendanceRecord(AttendanceRecord record) async {
     await _database.update(
       'attendence_records',
@@ -100,15 +95,12 @@ class DatabaseHelper {
       whereArgs: [
         record.firstName,
         record.lastName,
-        // record.date.toIso8601String(),
       ],
     );
   }
 
   Future<AttendanceRecord?> getAttendanceRecordByNameAndDate(
       String firstName, String lastName, DateTime date) async {
-    print('Searching for: $firstName $lastName on $date');
-
     final List<Map<String, dynamic>> records = await _database.query(
       'attendence_records',
       where: 'LOWER(firstName) = ? AND LOWER(lastName) = ? AND date = ?',
@@ -121,8 +113,6 @@ class DatabaseHelper {
     );
 
     if (records.isNotEmpty) {
-      print('Record found:');
-      print(records[0]); // Print the found record for more details
       return AttendanceRecord(
         firstName: records[0]['firstName'],
         lastName: records[0]['lastName'],
@@ -132,14 +122,13 @@ class DatabaseHelper {
         isPresent: records[0]['isPresent'] == 1,
       );
     } else {
-      print('No record found for: $firstName $lastName on $date');
       return null;
     }
   }
 
   Future<AttendanceRecord?> getAttendanceRecordByName(
       String firstName, String lastName) async {
-     List<Map<String, dynamic>> records = await _database.query(
+    final List<Map<String, dynamic>> records = await _database.query(
       'attendence_records',
       where: 'LOWER(firstName) = ? AND LOWER(lastName) = ?',
       whereArgs: [firstName.toLowerCase(), lastName.toLowerCase()],
@@ -154,10 +143,17 @@ class DatabaseHelper {
         regNum: records[0]['registrationNumber'],
         className: records[0]['className'],
         date: DateTime.parse(records[0]['date']),
-        isPresent: records[0]['isPresent'] == 1, // Ensure this is of type bool
+        isPresent: records[0]['isPresent'] == 1,
       );
     } else {
       return null;
     }
+  }
+
+  Future<void> saveLeaveRequest(String userEmail, String reason) async {
+    await _database.insert('leave_requests', {
+      'user_email': userEmail,
+      'reason': reason,
+    });
   }
 }

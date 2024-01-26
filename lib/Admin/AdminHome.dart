@@ -1,7 +1,6 @@
 import 'package:attendence_sys/Admin/ViewRecordA.dart';
 import 'package:attendence_sys/Admin/grading.dart';
 import 'package:attendence_sys/AppBar/CustomAppBar.dart';
-import 'package:attendence_sys/Student/LeaveReq.dart';
 import 'package:attendence_sys/Student/MarkAt.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -177,12 +176,12 @@ class _AdminHomeState extends State<AdminHome> {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.push(
+                        /*Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => LeaveReq(),
+                            builder: (context) => LeaveAccept(),
                           ),
-                        );
+                        );*/
                       },
                     ),
                   ),

@@ -15,7 +15,7 @@ class ViewRecord extends StatefulWidget {
 }
 
 class _ViewRecordState extends State<ViewRecord> {
-  DatabaseHelper _databaseHelper = DatabaseHelper();
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
   List<AttendanceRecord> attendanceRecords = [];
 
   @override
@@ -126,6 +126,7 @@ class _ViewRecordState extends State<ViewRecord> {
                                                       Navigator.of(context).pop(
                                                           true); // Confirm delete
                                                       // Delete the record from the database by date
+                                                      // ignore: unnecessary_null_comparison
                                                       if (record.date != null) {
                                                         await _databaseHelper
                                                             .deleteAttendanceRecord(

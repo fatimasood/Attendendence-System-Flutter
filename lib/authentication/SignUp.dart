@@ -39,7 +39,7 @@ class _SignUpState extends State<SignUp> {
       Utils().toastMessage(value.user!.email.toString());
       String userEmail = value.user!.email.toString();
       userMail = userEmail.toLowerCase();
-
+      print(userEmail);
       if (userEmail.contains('@admin.com')) {
         //Admin HOme page
         Navigator.push(

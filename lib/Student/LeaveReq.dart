@@ -1,19 +1,27 @@
-import 'package:attendence_sys/AppBar/CustomAppBar.dart';
-import 'package:attendence_sys/utils.dart';
+import 'package:attendence_sys/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../AppBar/CustomAppBar.dart';
+import '../utils.dart';
+import 'databaseHelper.dart';
+
+String? loggedInUserEmail = userMail;
+
 class LeaveReq extends StatefulWidget {
-  const LeaveReq({super.key});
+  const LeaveReq({Key? key}) : super(key: key);
 
   @override
   State<LeaveReq> createState() => _LeaveReqState();
 }
 
 class _LeaveReqState extends State<LeaveReq> {
-  TextEditingController _paragraphController = TextEditingController();
-  int maxLines = 4;
-  bool isDisabled = false;
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
+  final TextEditingController _paragraphController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,10 +31,9 @@ class _LeaveReqState extends State<LeaveReq> {
           child: Column(
             children: [
               Padding(
-                padding:
-                    const EdgeInsets.only(left: 20, top: 15.0, bottom: 5.8),
+                padding: const EdgeInsets.only(left: 20, top: 6.0, bottom: 0),
                 child: Text(
-                  "Write reason briefly in a 2 to 3 lines for Leave.",
+                  "Write a reason briefly in 2 to 3 lines for Leave.",
                   style: GoogleFonts.inter(
                     textStyle: const TextStyle(
                       fontSize: 14,
@@ -37,57 +44,147 @@ class _LeaveReqState extends State<LeaveReq> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(20),
-                child: Container(
-                  width: 340,
-                  height: 180,
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(248, 238, 238, 238),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x3f000000),
-                        offset: Offset(0, 4),
-                        blurRadius: 6,
-                      ),
-                    ],
-                  ),
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: _formKey,
                   child: Column(
                     children: [
+                      SizedBox(height: 16),
+                      buildInputField(
+                        controller: _emailController,
+                        hintText: 'Write your mail here',
+                      ),
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextField(
-                          enabled: !isDisabled,
-                          controller: _paragraphController,
-                          onChanged: (text) {
-                            int lines = '\n'.allMatches(text).length + 1;
-                            if (lines >= 4) {
-                              setState(() => isDisabled = true);
-                              setState(() {
+                        padding: EdgeInsets.all(20),
+                        child: Container(
+                          width: 340,
+                          height: 180,
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(248, 238, 238, 238),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x3f000000),
+                                offset: Offset(0, 4),
+                                blurRadius: 6,
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextField(
+                                  controller: _paragraphController,
+                                  onChanged: (text) {
+                                    int lines =
+                                        '\n'.allMatches(text).length + 1;
+                                    if (lines >= 4) {
+                                      setState(() {
+                                        Utils().toastMessage(
+                                            'Write your reason shortly!');
+                                      });
+                                    }
+                                  },
+                                  maxLines: null,
+                                  decoration: InputDecoration(
+                                    labelText: 'Reason...',
+                                    border: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 8.0),
+                      // leave_req.dart
+                      SizedBox(
+                        height: 40,
+                        width: 140,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xffc780ff),
+                          ),
+                          child: Text(
+                            "Submit",
+                            style: GoogleFonts.inter(
+                              textStyle: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xffdde6ed),
+                              ),
+                            ),
+                          ),
+                          onPressed: () async {
+                            try {
+                              if (_paragraphController.text.isNotEmpty) {
+                                if (_emailController.text ==
+                                    loggedInUserEmail) {
+                                  await _databaseHelper.saveLeaveRequest(
+                                    loggedInUserEmail!,
+                                    _paragraphController.text,
+                                  );
+                                  Utils().toastMessage(
+                                      'Leave request submitted successfully!');
+                                } else {
+                                  Utils().toastMessage(
+                                      'You submit Leave for Yourself!');
+                                }
+                              } else {
                                 Utils()
-                                    .toastMessage('Write your reason shortly!');
-                              });
+                                    .toastMessage('Please provide a reason!');
+                              }
+                            } catch (e) {
+                              print('Error in onPressed: $e');
                             }
                           },
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            labelText: 'Reason.....',
-                            border: InputBorder.none,
-                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              SizedBox(height: 8.0),
-              ElevatedButton(
-                onPressed: () {
-                  print('User input: ${_paragraphController.text}');
-                },
-                child: Text('Submit'),
-              ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildInputField({
+    required TextEditingController controller,
+    required String hintText,
+    bool enabled = true,
+  }) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 12, 21, 9),
+      child: Container(
+        width: 326,
+        height: 50,
+        decoration: BoxDecoration(
+          color: Color.fromARGB(248, 238, 238, 238),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x3f000000),
+              offset: Offset(0, 4),
+              blurRadius: 6,
+            ),
+          ],
+        ),
+        child: TextFormField(
+          controller: controller,
+          enabled: enabled,
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.only(top: 8.0, left: 15),
+            hintText: hintText,
+            hintStyle: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: Colors.black,
+            ),
+            border: InputBorder.none,
           ),
         ),
       ),

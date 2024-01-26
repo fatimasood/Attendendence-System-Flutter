@@ -43,9 +43,8 @@ class _SignInState extends State<SignIn> {
       Utils().toastMessage(value.user!.email.toString());
       String userEmail = value.user!.email.toString();
       userMail = userEmail.toLowerCase();
-
+      print("Email this is login is: ,$userEmail");
       if (userEmail.contains('@admin.com')) {
-       
         Navigator.push(
           context,
           MaterialPageRoute(
