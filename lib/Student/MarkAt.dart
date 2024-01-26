@@ -32,7 +32,7 @@ class _MarkAttendenceState extends State<MarkAttendence> {
   late TextEditingController _classController;
   late TextEditingController _dateController;
   bool _isPresent = true;
-  bool _isStudent = false;
+  //bool _isStudent = false;
 
   File? _image;
 
@@ -64,7 +64,7 @@ class _MarkAttendenceState extends State<MarkAttendence> {
 
     print(loggedInUserEmail);
     if (loggedInUserEmail == name.toLowerCase() + '@student.com') {
-      _isStudent = true;
+      //_isStudent = true;
       final existingRecord = await _databaseHelper.getAttendanceRecordByName(
         _firstNameController.text,
         _lastNameController.text,
