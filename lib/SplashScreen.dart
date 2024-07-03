@@ -62,7 +62,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "ATTENDENCE",
+                    "LETS",
                     style: GoogleFonts.inter(
                       textStyle: const TextStyle(
                         fontSize: 25,
@@ -75,7 +75,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     width: 10.0,
                   ),
                   Text(
-                    "SYSTEM",
+                    "ORGANIZE",
                     style: GoogleFonts.inter(
                       textStyle: const TextStyle(
                         fontSize: 25,

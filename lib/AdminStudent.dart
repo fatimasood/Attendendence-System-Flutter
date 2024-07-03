@@ -37,20 +37,40 @@ class _AdminStudentState extends State<AdminStudent> {
               Center(
                 child: Padding(
                   padding: const EdgeInsets.only(top: 100, bottom: 55),
-                  child: Text(
-                    "Login As.......??",
-                    style: GoogleFonts.inter(
-                      textStyle: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: Text(
+                          "Hye! Welcome to LETSORGANIZE, the task manager system.",
+                          style: GoogleFonts.inter(
+                            textStyle: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        "Login As.......??",
+                        style: GoogleFonts.inter(
+                          textStyle: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
               Container(
-                height: 130,
+                height: 50,
                 width: 130,
                 child: ElevatedButton(
                   onPressed: () {
@@ -78,7 +98,7 @@ class _AdminStudentState extends State<AdminStudent> {
               ),
               SizedBox(height: 20),
               Container(
-                height: 130,
+                height: 50,
                 width: 130,
                 child: ElevatedButton(
                   onPressed: () {
@@ -93,7 +113,35 @@ class _AdminStudentState extends State<AdminStudent> {
                         borderRadius: BorderRadius.circular(65),
                       )),
                   child: Text(
-                    "STUDENT",
+                    "Manager",
+                    style: GoogleFonts.inter(
+                      textStyle: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xffdde6ed),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Container(
+                height: 50,
+                width: 130,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => SignUp()));
+                  },
+                  style: ElevatedButton.styleFrom(
+                      primary: Color(0xffc780ff),
+                      elevation: 5,
+                      shadowColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(65),
+                      )),
+                  child: Text(
+                    "User",
                     style: GoogleFonts.inter(
                       textStyle: const TextStyle(
                         fontSize: 14,
