@@ -1,8 +1,8 @@
+import 'package:attendence_sys/Admin/ViewRecordA.dart';
+import 'package:attendence_sys/SplashScreen.dart';
 import 'package:attendence_sys/Student/databaseHelper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
-import 'SplashScreen.dart';
 
 String? userMail;
 
@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const SplashScreen(title: 'Attendence System'),
+      //home: const ViewRecordA(),
     );
   }
 }

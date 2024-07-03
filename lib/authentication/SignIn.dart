@@ -1,4 +1,7 @@
+import 'package:attendence_sys/Admin/ViewRecordA.dart';
 import 'package:attendence_sys/AdminStudent.dart';
+import 'package:attendence_sys/Manager/ManagerHome.dart';
+import 'package:attendence_sys/Student/ViewRecord.dart';
 import 'package:attendence_sys/authentication/SignUp.dart';
 import 'package:attendence_sys/main.dart';
 import 'package:attendence_sys/utils.dart';
@@ -7,9 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../Admin/AdminHome.dart';
-import '../Student/StudentHome.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -49,15 +49,23 @@ class _SignInState extends State<SignIn> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => AdminHome(),
+            builder: (context) => ViewRecordA(),
           ),
         );
-      } else if (userEmail.contains('@student.com')) {
-        // User is a student
+      } else if (userEmail.contains('@user.com')) {
+        // User
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => StudentHome(),
+            builder: (context) => ViewRecord(),
+          ),
+        );
+      } else if (userEmail.contains('@manager.com')) {
+        // manager
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ManagerHome(),
           ),
         );
       } else {
